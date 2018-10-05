@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Document</title>
+
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css' integrity='sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO'
+        crossorigin='anonymous'>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js' integrity='sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49'
+        crossorigin='anonymous'></script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js' integrity='sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy'
+        crossorigin='anonymous'></script>
+
+    <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css'>
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+
+    <link rel='stylesheet' href='css/index.css'>
+
+    <script>
+
+        $(document).ready(function () {
+
+            function display(info) {
+                $('#all').removeAttr("hidden")
+
+                if (info.next != null) {
+                    $('#next').removeAttr("hidden")
+                } else {
+                    $('#next').attr("hidden", "hidden")
+                }
+
+                if (info.previous != null) {
+                    $('#prev').removeAttr("hidden")
+                } else {
+                    $('#prev').attr("hidden", "hidden")
+                }
+
+                let build = ""
+
+                for (let i = 0; i < info.results.length; i++) {
+                    build += "<p>" + info.results[i].name + "</p>"
+                }
+
+                $('#content').html(build)
+                setTimeout(function(){
+                    $('#info').scroll(bottom)
+                }, 500);
+    
+
+            }
+
+            $('#people').click(function () {
+                $.get('/people/0', function (data) {
+                    display(data)
+                }, 'json');
+            });
+
+            $('#planets').click(function () {
+                $.get('/planets/0', function (data) {
+                    display(data)
+                }, 'json');
+            });
+
+            $('#next').click(function () {
+
+                $.get('/next', function (data) {
+
+                    display(data)
+
+                }, 'json');
+
+            });
+
+            $('#prev').click(function () {
+
+                $.get('/prev', function (data) {
+
+                    display(data)
+
+                }, 'json');
+
+            });
+
+            function allNexts() {
+
+                $.get('/next', function (data) {
+                    let build = ""
+
+                    for (let i = 0; i < data.results.length; i++) {
+
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+
+                    $('#content').append(build)
+
+                    if (data.next == null) {
+                        $('#loading').attr("hidden", "hidden")
+                        return false
+                    } else {
+                        allNexts()
+                    }
+
+                }, 'json');
+            }
+
+            $('#all').click(function () {
+
+                $( "#info").unbind( "scroll" );
+                $('#loading').removeAttr("hidden")
+
+                $.get('/all', function (data) {
+
+                    let build = ""
+
+                    for (let i = 0; i < data.results.length; i++) {
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+
+                    $('#next').attr("hidden", "hidden")
+                    $('#prev').attr("hidden", "hidden")
+
+                    $('#content').html(build)
+
+                    allNexts()
+
+                }, 'json');
+            });
+
+            function bottom(){
+                console.log("*")
+                if ($("#info").scrollTop() + $("#info").height() >= $("#info").children().height() + 15) {
+                    console.log("*****************")
+                    $( "#info").unbind( "scroll" );
+                    add()
+                }
+            }
+
+            function add(){
+
+                $('.white_block').removeAttr("hidden")
+
+                $('#loading').removeAttr("hidden")
+                $.get('/next', function (data) {
+                    
+                    let build = ""
+
+                    for (let i = 0; i < data.results.length; i++) {
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+                    console.log(data)
+                    $('#content').append(build)
+                    $('#loading').attr("hidden", "hidden")
+                    $('#info').scroll(bottom);
+                }, 'json');
+
+                
+  
+            }
+        })
+
+    </script>
+
+</head>
+
+<body>
+    <h1>Star Wars Wiki</h1>
+    <hr>
+    <h3 class="space">What topic do you want information on?</h3>
+    <div class="row pagers">
+        <div class="col-2"></div>
+        <div class="col-4">
+            <button id="people" class="btn btn-primary">People</button>
+        </div>
+        <div class="col-4">
+            <button id="planets" class="btn btn-primary">Planets</button>
+        </div>
+    </div>
+
+
+    <div id="info">
+        <div id="content">
+        </div>
+        <img id="loading" src="images/loading.gif" alt="Loading" hidden>
+    </div>
+
+    <div class="row pagers">
+        <div class="col-4">
+            <button id="prev" class="btn btn-warning prev" hidden>Previous 10</button>
+        </div>
+        <div class="col-4">
+            <button id="all" class="btn btn-warning all" hidden>Get all</button>
+        </div>
+        <div class="col-4">
+            <button id="next" class="btn btn-warning next" hidden>Next 10</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

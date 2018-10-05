@@ -1,0 +1,38 @@
+body{
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: rgb(159, 253, 253);
+    text-align: center;
+}
+
+#info{
+    overflow: scroll;
+    margin: 20px auto;
+    border: 2px solid rgba(128, 128, 128, 0.637);
+    border-radius: 2px;
+    width: 400px;
+    height: 300px;
+    padding: 20px;
+    background-color: rgb(230, 255, 255);
+}
+
+#loading{
+    width: 20px;
+}
+
+#white_block{
+    height: 1000px;
+}
+
+#height{
+    height: 28px;
+}
+
+.pagers{
+    width: 400px;
+    margin: auto;
+}
+
+.space{
+    margin-bottom: 20px; 
+}
